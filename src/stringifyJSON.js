@@ -1,29 +1,34 @@
 // this is what you would do if you liked things to be easy:
 // var stringifyJSON = JSON.stringify;
 
-// but you don't so you're going to write it from scratch:
-// if string
-// return '"' + obj + '"'
-// if not array or objs
-// return '' + obj
-// if array
-// iterate
-// add brackets
-//  if  i is obj recurse
-// if obj
-
-// for in loop
-// define an array variable []
-//
-
-// smallest = prim
 var stringifyJSON = function(obj) {
   var result = '';
   if ( typeof obj === 'string' ) {
-    result += '"' + obj + '"';
-  } else if ( typeof obj === 'null' || 'number' || 'boolean' ) {
-    result += '' + obj;
+    return '"' + obj + '"';
+  } else if (obj === null || typeof obj === 'number' || typeof obj === 'boolean' ) {
+    return '' + obj;
+  } else if (Array.isArray(obj)) {
+    var arr = [];
+    for (var i = 0; i < obj.length; i++) {
+      if (i === obj.length - 1) {
+        result += stringifyJSON(obj[i]);
+      } else {
+        result += stringifyJSON(obj[i]) + ',';
+      }
+    }
+    result = '[' + result + ']';
+  } else {
+    result = [];
+    for (key in obj) {
+      if (obj[key] === undefined) {
+        return '{}';
+      }
+      var stringedKeys = stringifyJSON(key);
+      var stringedObjs = stringifyJSON(obj[key]);
+      result.push(stringedKeys + ':' + stringedObjs);
+    }
 
+    return '{' + result.join(',') + '}';
   }
   return result;
 };
